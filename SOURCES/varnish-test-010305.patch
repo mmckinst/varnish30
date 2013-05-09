@@ -1,0 +1,12 @@
+Index: bin/varnishtest/tests/r01035.vtc
+===================================================================
+--- bin/varnishtest/tests/r01035.vtc	(revision 48054086d85a912723b59b44d686c4e4d104284e)
++++ bin/varnishtest/tests/r01035.vtc	(revision 86619addc250bede7f6be2f635fe0cf1deb067ea)
+@@ -1,5 +1,5 @@
+ varnishtest "Test case for #1035"
+ 
+-varnish v1 -arg "-a 127.0.0.1:80 -b localhost:8080"
++varnish v1 -arg "-a 127.0.0.1:80 -b 127.0.0.1:8080"
+ varnish v1 -cliok "param.set listen_address 127.0.0.1:80"
+ varnish v1 -clierr 106 "param.set listen_address 127.0.0.1:65540"
+

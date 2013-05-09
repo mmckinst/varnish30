@@ -5,7 +5,7 @@
 Summary: High-performance HTTP accelerator
 Name: %{name}
 Version: 3.0.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: BSD
 Group: System Environment/Daemons
 URL: http://www.varnish-cache.org/
@@ -16,6 +16,11 @@ Source3: varnishncsa.service
 Source4: varnishlog.service
 Patch1:  varnish.no_pcre_jit.patch
 Patch2:  varnish.fix_ppc64_upstream_bug_1194.patch
+
+# https://www.varnish-cache.org/trac/changeset/86619addc250bede7f6be2f635fe0cf1deb067ea/bin/varnishtest/tests/r01035.vtc
+# test #1035 is failing on el6 only r01035.vtc
+Patch3:	 varnish-test-010305.patch
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 # To build from git, start with a make dist, see redhat/README.redhat 
 # You will need at least automake autoconf libtool python-docutils
@@ -102,6 +107,8 @@ Documentation files for %name
 %endif
 
 %patch2
+
+%patch3
 
 mkdir examples
 cp bin/varnishd/default.vcl etc/zope-plone.vcl examples
@@ -317,6 +324,9 @@ fi
 %endif
 
 %changelog
+* Thu May  9 2013 Mark McKinstry <mmckinst@nexcess.net> - 3.0.3-5
+- include patch3 from upstream to pass tests on el6
+
 * Thu Apr 18 2013 Mark McKinstry <mmckinst@nexcess.net> - 3.0.3-4
 - modify el6 from EPEL so it works with yum-plugin-replace
 
