@@ -4,8 +4,8 @@
 
 Summary: High-performance HTTP accelerator
 Name: %{name}
-Version: 3.0.3
-Release: 5%{?dist}
+Version: 3.0.4
+Release: 1%{?dist}
 License: BSD
 Group: System Environment/Daemons
 URL: http://www.varnish-cache.org/
@@ -14,18 +14,14 @@ Source1: varnish.service
 Source2: varnish.params
 Source3: varnishncsa.service
 Source4: varnishlog.service
-Patch1:  varnish.no_pcre_jit.patch
 Patch2:  varnish.fix_ppc64_upstream_bug_1194.patch
-
-# https://www.varnish-cache.org/trac/changeset/86619addc250bede7f6be2f635fe0cf1deb067ea/bin/varnishtest/tests/r01035.vtc
-# test #1035 is failing on el6 only r01035.vtc
-Patch3:	 varnish-test-010305.patch
+Patch3:  varnish-3.0.4.fix_CVE-2013-4484.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 # To build from git, start with a make dist, see redhat/README.redhat 
 # You will need at least automake autoconf libtool python-docutils
 #BuildRequires: automake autoconf libtool python-docutils
-BuildRequires: ncurses-devel libxslt groff pcre-devel pkgconfig jemalloc-devel
+BuildRequires: ncurses-devel libxslt groff pcre-devel pkgconfig jemalloc-devel libedit-devel
 Requires: %{name}-libs = %{version}-%{release}
 Requires: logrotate
 Requires: ncurses
@@ -100,14 +96,8 @@ Documentation files for %name
 
 %prep
 %setup -q -n %{real_name}-%{version}
-#%setup -q -n varnish-cache
-
-%ifarch i386 i686 ppc
-%patch1
-%endif
 
 %patch2
-
 %patch3
 
 mkdir examples
@@ -196,7 +186,7 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_bindir}/*
 %{_var}/lib/varnish
-%{_var}/log/varnish
+%attr(0700,root,root) %dir %{_var}/log/varnish
 %{_mandir}/man1/*.1*
 %{_mandir}/man3/*.3*
 %{_mandir}/man7/*.7*
@@ -324,6 +314,13 @@ fi
 %endif
 
 %changelog
+* Wed Nov 27 2013 Mark McKinstry <mmckinst@nexcess.net> - 3.0.4-1
+- upgrade to 3.0.4
+- remove varnish-test-010305.patch, fixed upstream
+- add libedit-devel as a build requirement
+- patch for CVE-2013-4484
+- remove pcre jit patch
+
 * Thu May  9 2013 Mark McKinstry <mmckinst@nexcess.net> - 3.0.3-5
 - include patch3 from upstream to pass tests on el6
 
